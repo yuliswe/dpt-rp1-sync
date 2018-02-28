@@ -98,10 +98,10 @@ const DEBUGKEY =
       '-----BEGIN PUBLIC KEY-----\n' +
       'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4U/mMHLLAt2rXKHCoziy\n' +
       'VYbuXewac4TClWnWRHMT77NabJesoH/0KSqxO8a5743cNFPE7jl/ooJ+avyKvEbr\n' +
-      'rrlopdUhywyc/S5Os30hJKtu3rsRWKVqUvQ/UcZs0UN3GhX6Mm+zvhJudVLxMAHK\n' + 
+      'rrlopdUhywyc/S5Os30hJKtu3rsRWKVqUvQ/UcZs0UN3GhX6Mm+zvhJudVLxMAHK\n' +
       'F8eNGPGpdqDSqtLlWrWobEUwhuqHB9SzV7KIekpm7NtltwH1Eo84g8yKbOwPzBYR\n' +
       'Kulwh6fQr9x6yRY9Ha/PDAviqSLJ/QeVsWbHi0C0jus0dmUhuoKXeKvQoTrT75jY\n' +
-      'AEeGCrog5q9f3HTLyM/OfFfpMfsZbJhu/k+k52/wxuoYJcB3f6OIdcV9EcHB71ZT\n' + 
+      'AEeGCrog5q9f3HTLyM/OfFfpMfsZbJhu/k+k52/wxuoYJcB3f6OIdcV9EcHB71ZT\n' +
       'IQIDAQAB\n' +
       '-----END PUBLIC KEY-----\n';
 
@@ -123,7 +123,7 @@ try {
 
 // Default values.
 var appOpts = {
-    deviceId: null,
+    deviceId: "IOService:/IOResources/AppleUSBHostResources/AppleUSBLegacyRoot/AppleUSBEHCI@fd000000/DPT-RP1@fd120000",
     windowId: 'explorer',
     debug: false,
     resizable: false,
@@ -204,10 +204,10 @@ function processArguments(argv, appOpts) {
              * --close が指定された場合には、ユーザーがアプリを終了した場合と同様の方法で
              * アプリの終了を試みる。具体的には、転送中断の確認ダイアログを表示した上で
              * 転送を中断し、アプリを終了させる。
-             * 
+             *
              * アップデートインストールなどの際に、インストーラーから呼び出されることを
              * 想定している。
-             * 
+             *
              * ※RC直前の仕様変更による追加対応のため、--close/--force-closeのフラグで両実装を保持
              */
             appOpts.closeApp = true;
@@ -216,10 +216,10 @@ function processArguments(argv, appOpts) {
             /**
              * --force-close が指定された場合には、ユーザーに確認ダイアログを表示せずに
              * アプリの終了を行った上で、アプリを終了させる。
-             * 
+             *
              * アップデートインストールなどの際に、インストーラーから呼び出されることを
              * 想定している。
-             * 
+             *
              * ※RC直前の仕様変更による追加対応のため、--close/--force-closeのフラグで両実装を保持
              */
             appOpts.forceCloseApp = true;
@@ -724,11 +724,11 @@ if (shouldQuit) {
 
 // --close/--force-close によるアプリの終了
 // ※RC直前の仕様変更による追加対応のため、--close/--force-closeのフラグで両実装を保持
-// 
+//
 // インストーラーがアップデートインストールを開始する際に、アプリが現在起動しているか否かに
 // 関わらず、--close/--force-close によるアプリの終了を要求する可能性が高い。そのため、
 // アプリが起動していない状態で呼び出された場合には、即座にアプリを終了させる。
-// 
+//
 if (appOpts && appOpts.closeApp) {
     // --close が指定された場合には、画面を表示せずにアプリを終了する
     // console.log('first instance quit by --close');
@@ -774,7 +774,7 @@ app.on('will-quit', function(ev) {
             discoveryCtrl.close( function(err) {
                 resolve();
             });
-        }), 
+        }),
         new Promise(function(resolve, reject) {
             autoBtPanConnector.destroy(function (err) {
                 resolve();
@@ -792,8 +792,8 @@ app.on('will-quit', function(ev) {
                 }
 
                 removeFiles(
-                    files, 
-                    process.env.MW_TEMPORARY_FILE_DIR_PATH, 
+                    files,
+                    process.env.MW_TEMPORARY_FILE_DIR_PATH,
                     () => {
                         resolve();
                     }
@@ -820,9 +820,9 @@ app.on('will-quit', function(ev) {
 // 指定されたフォルダ直下の指定されたファイルを削除する。フォルダは削除しない
 function removeFiles( files, folder, callback ) {
     if( typeof folder === 'string' && typeof files === 'object' && files.length > 0 ) {
-        
+
         // folderの最後の'/'の有無はnodejsが処理してくれる
-        let file = folder + '/' + files.pop(); 
+        let file = folder + '/' + files.pop();
         fs.unlink(file, (err) => {
             //ignore this error
             removeFiles(files, folder, callback);
@@ -952,7 +952,7 @@ function startMainWindow() {
     ipcMain.on('explorerReady', (e) => {
         explorerReady = true;
 
-        // --close/--force-close によるアプリの終了        
+        // --close/--force-close によるアプリの終了
         if (closeAppRequired) {
             // --close によるアプリの終了を要求されていた場合
             mainWindow.webContents.send('closeApp');
@@ -974,7 +974,7 @@ function startMainWindow() {
             // console.log(device);
             mainWindow.webContents.send('usbSerialConnected', device);
         });
-                        
+
         discoveryCtrl.on('usbSerialDisconnected', ( device ) => {
             // console.log('usbSerialdisconnected: ');
             // console.log(device);
@@ -1079,10 +1079,10 @@ ipc.on(ipcMessage.PARENT_TO_MAIN.OPEN_DIALOG, function(e, dialogName, dialogURL,
  *  - ダイヤログの表示
  *      - parentWin: => main [ipc通信]： PARENT_TO_MAIN.OPEN_DIALOG
  *      - main: childWinを作る
- *      - childWin: ipc listenerを登録し、チャンネル名を決める 
+ *      - childWin: ipc listenerを登録し、チャンネル名を決める
  *      - childWin: => main [ipc通信]： dialogChannelEntry
  *      - main: channelを確立し、channelにparentWin,childWinのリスナーの登録する
- *      - main: => parentWin [ipc通信]: MAIN_TO_PARENT.FINISH_CONNECT 
+ *      - main: => parentWin [ipc通信]: MAIN_TO_PARENT.FINISH_CONNECT
  *      - parentWin: => main [ipc通信]: PARENT_TO_MAIN.SEND_INIT_INFO, initData
  *      - main: => childWin [ipc通信]: MAIN_TO_CHILD.INIT_INFO, initData
  *      - childWin: 画面の初期化をする
@@ -1133,7 +1133,7 @@ ipc.on(ipcMessage.PARENT_TO_MAIN.OPEN_DIALOG, function(e, dialogName, dialogURL,
  *                  - 閉じれる場合:
  *                      - childWin: => main [ipc通信] CHILD_TO_MAIN.CLOSE_DIALOG
  *                      - main: dialogClosable = trunに設定し、childWinを閉じる
- *                  - 閉じれない場合: 
+ *                  - 閉じれない場合:
  *                      - 閉じれない場合の処理
  *
  *
@@ -1204,7 +1204,7 @@ Dialog = function(dialogName, dialogURL, browserWindowOptions, parentWinId, chan
     });
 
     this.childWin.loadURL(dialogURL);
-    
+
     // Prevent any kind of navigation triggered by the user!
     // textファイルなどを素早くメイン画面上にドロップすると、
     // そのファイルが開かれるのを防ぐため
@@ -1249,7 +1249,7 @@ Dialog.prototype.setParentListener = function() {
         if (message === ipcMessage.PARENT_TO_MAIN.OPEN_DIALOG_CONNECTING) {
             this.childWin.webContents.send(this.channel4Child, ipcMessage.MAIN_TO_CHILD.OPEN_DIALOG_CONNECTING);
         }
-        
+
         if (message === ipcMessage.PARENT_TO_MAIN.CLOSE_DIALOG_CONNECTING) {
             this.childWin.webContents.send(this.channel4Child, ipcMessage.MAIN_TO_CHILD.CLOSE_DIALOG_CONNECTING);
         }
